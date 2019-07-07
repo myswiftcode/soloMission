@@ -17,6 +17,7 @@
 		D86996E222D19BC100E229D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D86996E022D19BC100E229D1 /* LaunchScreen.storyboard */; };
 		D86996ED22D19BC100E229D1 /* Solo_MissionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86996EC22D19BC100E229D1 /* Solo_MissionTests.swift */; };
 		D86996F822D19BC100E229D1 /* Solo_MissionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86996F722D19BC100E229D1 /* Solo_MissionUITests.swift */; };
+		D869970622D1B71200E229D1 /* playerBullet.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D869970522D1B71200E229D1 /* playerBullet.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		D86996F322D19BC100E229D1 /* Solo MissionUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Solo MissionUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D86996F722D19BC100E229D1 /* Solo_MissionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Solo_MissionUITests.swift; sourceTree = "<group>"; };
 		D86996F922D19BC100E229D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D869970522D1B71200E229D1 /* playerBullet.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = playerBullet.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				D86996D122D19BBF00E229D1 /* AppDelegate.swift */,
 				D86996D322D19BBF00E229D1 /* GameScene.sks */,
 				D86996D522D19BBF00E229D1 /* Actions.sks */,
+				D869970522D1B71200E229D1 /* playerBullet.mp3 */,
 				D86996D722D19BBF00E229D1 /* GameScene.swift */,
 				D86996D922D19BBF00E229D1 /* GameViewController.swift */,
 				D86996DB22D19BBF00E229D1 /* Main.storyboard */,
@@ -239,6 +242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D86996DD22D19BBF00E229D1 /* Main.storyboard in Resources */,
+				D869970622D1B71200E229D1 /* playerBullet.mp3 in Resources */,
 				D86996D422D19BBF00E229D1 /* GameScene.sks in Resources */,
 				D86996DF22D19BC100E229D1 /* Assets.xcassets in Resources */,
 				D86996E222D19BC100E229D1 /* LaunchScreen.storyboard in Resources */,
@@ -447,6 +451,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q2GDGH968J;
 				INFOPLIST_FILE = "Solo Mission/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -465,6 +470,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q2GDGH968J;
 				INFOPLIST_FILE = "Solo Mission/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
