@@ -9,13 +9,22 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
     
     let player = SKSpriteNode(imageNamed: "playerShip")
     let playerBulletSoundEffect = SKAction.playSoundFileNamed("playerBullet.mp3", waitForCompletion: false)
+    let explosionSundEffect = SKAction.playSoundFileNamed("explosion.wav", waitForCompletion: false)
+    
+    
+    struct PhysicsCategories {
+        static let pNone : UInt32 = 0
+        static let pPlayer : UInt32 = 0b1  // 1
+        static let pBullet : UInt32 = 0b10 // 2
+        static let pEnemy : UInt32 = 0b100 // 4
+    }
     
     // Создаем случайную
     func random() -> CGFloat {
@@ -43,6 +52,9 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         
+        // Добавляем физику в игру
+        self.physicsWorld.contactDelegate = self
+        
         // Пишем фон
         let background = SKSpriteNode(imageNamed: "background")
         background.size = self.size
@@ -54,16 +66,85 @@ class GameScene: SKScene {
         player.setScale(0.3)
         player.position = CGPoint(x: self.size.width / 2, y: self.size.height * 0.2)
         player.zPosition = 2
+        // Добавляем фищику
+        player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
+        player.physicsBody!.affectedByGravity = false
+        player.physicsBody!.categoryBitMask = PhysicsCategories.pPlayer
+        player.physicsBody!.contactTestBitMask = PhysicsCategories.pNone
+        player.physicsBody!.contactTestBitMask = PhysicsCategories.pEnemy
         self.addChild(player)
         
         startNewLevel()
+    }
+    
+    // Создаем обработку контактов спрайтов
+    func didBegin(_ contact: SKPhysicsContact) {
+        //
+        var body1 = SKPhysicsBody()
+        var body2 = SKPhysicsBody()
+        
+        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+            body1 = contact.bodyA
+            body2 = contact.bodyB
+        } else {
+            body1 = contact.bodyB
+            body2 = contact.bodyA
+        }
+        
+        if body1.categoryBitMask == PhysicsCategories.pPlayer && body2.categoryBitMask == PhysicsCategories.pEnemy {
+            // Игрок наносит урон врагу
+            
+            if body1.node != nil {
+                spawnEnemyExplosion(spawnPosition: body1.node!.position)
+            }
+            
+            if body2.node != nil {
+                spawnEnemyExplosion(spawnPosition: body2.node!.position)
+            }
+            
+            body1.node?.removeFromParent()
+            //body2.node?.removeFromParent() // Косякцц
+            
+            spawnEnemyExplosion(spawnPosition: body1.node!.position)
+            spawnEnemyExplosion(spawnPosition: body2.node!.position)
+        }
+        
+        if body1.categoryBitMask == PhysicsCategories.pBullet && body2.categoryBitMask == PhysicsCategories.pEnemy && (body2.node?.position.y)! < self.size.height {
+            // Пуля наносит урон варгу
+            
+            if body2.node != nil {
+                spawnEnemyExplosion(spawnPosition: body2.node!.position)
+            }
+            
+            body1.node?.removeFromParent()
+            body2.node?.removeFromParent()
+            
+            //spawnEnemyExplosion(spawnPosition: body2.node!.position)
+        }
+        
+    }
+    
+    func spawnEnemyExplosion(spawnPosition: CGPoint) {
+        let explosion = SKSpriteNode(imageNamed: "explosion")
+        explosion.position = spawnPosition
+        explosion.zPosition = 3
+        explosion.setScale(0)
+        self.addChild(explosion)
+        
+        let scaleIn = SKAction.scale(to: 1, duration: 0.1)
+        let fadeOut = SKAction.fadeOut(withDuration: 0.1)
+        let delete = SKAction.removeFromParent()
+        
+        let explosionSequence = SKAction.sequence([explosionSundEffect, scaleIn, fadeOut, delete])
+        explosion.run(explosionSequence)
+        
     }
     
     func startNewLevel() {
         
         // Создаем задержку для появление противника и разделяем createEnemy01() от touchesBegan()
         let spawn = SKAction.run(createEnemy01)
-        let waitToSpawn = SKAction.wait(forDuration: 2) // время задержки  при 0.1 - 40 спрайтов врагов!
+        let waitToSpawn = SKAction.wait(forDuration: 2.5) // время задержки  при 0.1 - 40 спрайтов врагов!
         let spawnSequence = SKAction.sequence([spawn, waitToSpawn])
         let spawnForever = SKAction.repeatForever(spawnSequence)
         self.run(spawnForever)
@@ -76,6 +157,12 @@ class GameScene: SKScene {
         bullet.setScale(0.3)
         bullet.position = player.position
         bullet.zPosition = 1
+        // Добавляем физику
+        bullet.physicsBody = SKPhysicsBody(rectangleOf: bullet.size)
+        bullet.physicsBody!.affectedByGravity = false
+        bullet.physicsBody!.categoryBitMask = PhysicsCategories.pBullet
+        bullet.physicsBody!.collisionBitMask = PhysicsCategories.pNone
+        bullet.physicsBody!.contactTestBitMask = PhysicsCategories.pEnemy
         self.addChild(bullet)
         
         let moveBullet = SKAction.moveTo(y: self.size.height + bullet.size.height, duration: 1)
@@ -96,6 +183,12 @@ class GameScene: SKScene {
         let enemy = SKSpriteNode(imageNamed: "enemyShip")
         enemy.setScale(0.2)
         enemy.position = startPoint
+        // Добавляем физику
+        enemy.physicsBody = SKPhysicsBody(rectangleOf: enemy.size)
+        enemy.physicsBody!.affectedByGravity = false
+        enemy.physicsBody!.categoryBitMask = PhysicsCategories.pEnemy
+        enemy.physicsBody!.collisionBitMask = PhysicsCategories.pNone
+        enemy.physicsBody!.contactTestBitMask = PhysicsCategories.pPlayer | PhysicsCategories.pBullet
         enemy.zPosition = 2
         self.addChild(enemy)
         
