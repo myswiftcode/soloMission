@@ -11,6 +11,17 @@ import GameplayKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
+    // Добавляем счет игры
+    var gameScore = 0
+    let scoreLabel = SKLabelNode(fontNamed: "The Bold Font")
+    
+    // Добвляем жизнь игроку
+    var livesNumber = 3
+    let livesLabel = SKLabelNode(fontNamed: "The Bold Font")
+    
+    // Добавляем уровни в игре
+    var levelNumber = 0
+    
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
     
@@ -74,7 +85,49 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.physicsBody!.contactTestBitMask = PhysicsCategories.pEnemy
         self.addChild(player)
         
+        // Добавляем текс на экран игры
+        // Счетчик
+        scoreLabel.text = "Score: 0"
+        scoreLabel.fontSize = 70
+        scoreLabel.fontColor = SKColor.white
+        scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
+        scoreLabel.position = CGPoint(x: self.size.width * 0.15, y: self.size.height * 0.9)
+        scoreLabel.zPosition = 100
+        self.addChild(scoreLabel)
+        
+        // Жизни игрока
+        livesLabel.text = "Levels: 3"
+        livesLabel.fontSize = 70
+        livesLabel.fontColor = SKColor.white
+        livesLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.right
+        livesLabel.position = CGPoint(x: self.size.width * 0.85, y: self.size.height * 0.9)
+        livesLabel.zPosition = 100
+        self.addChild(livesLabel)
+        
         startNewLevel()
+    }
+    
+    // Добавляем проверку жизней и конец игры
+    func loseAlife(){
+        
+        livesNumber -= 1
+        livesLabel.text = "Lives: \(livesNumber)"
+        
+        let scaleUp = SKAction.scale(to: 1.5, duration: 0.2)
+        let scaleDown = SKAction.scale(to: 1, duration: 0.2)
+        let scaleSequence = SKAction.sequence([scaleUp, scaleDown])
+        livesLabel.run(scaleSequence)
+    }
+    
+    // Добавляем обработчик счетчика игры
+    func addScore() {
+        gameScore += 1
+        scoreLabel.text = "Score: \(gameScore)"
+        
+        // Добавляем события - новый уровень при достижении количества убитых врагов
+        if gameScore == 10 || gameScore == 25 || gameScore == 50 {
+            startNewLevel()
+        }
     }
     
     // Создаем обработку контактов спрайтов
@@ -112,6 +165,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if body1.categoryBitMask == PhysicsCategories.pBullet && body2.categoryBitMask == PhysicsCategories.pEnemy && (body2.node?.position.y)! < self.size.height {
             // Пуля наносит урон варгу
             
+            addScore()
+            
             if body2.node != nil {
                 spawnEnemyExplosion(spawnPosition: body2.node!.position)
             }
@@ -142,11 +197,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func startNewLevel() {
         
+        levelNumber += 1
+        
+        if self.action(forKey: "spawningEnemies") != nil {
+            self.removeAction(forKey: "spawningEnemies")
+        }
+        
+        var levelDuration = TimeInterval()
+        
+        switch levelNumber {
+        // время задержки  при 0.1 - 40 спрайтов врагов!
+        case 1: levelDuration = 1.2
+        case 2: levelDuration = 1
+        case 3: levelDuration = 0.8
+        case 4: levelDuration = 0.5
+        default:
+            levelDuration = 0.5
+            print("Cannot find level info")
+        }
+        
+        
         // Создаем задержку для появление противника и разделяем createEnemy01() от touchesBegan()
         let spawn = SKAction.run(createEnemy01)
-        let waitToSpawn = SKAction.wait(forDuration: 2.5) // время задержки  при 0.1 - 40 спрайтов врагов!
-        let spawnSequence = SKAction.sequence([spawn, waitToSpawn])
+        let waitToSpawn = SKAction.wait(forDuration: levelDuration)
+        let spawnSequence = SKAction.sequence([waitToSpawn, spawn])
         let spawnForever = SKAction.repeatForever(spawnSequence)
+        self.run(spawnForever, withKey: "spawningEnemies")
         self.run(spawnForever)
     }
     
@@ -194,7 +270,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let moveEnemy = SKAction.move(to: endPoint, duration: 4) // Скорость полета врагов 1 - быстро ... 9 - очень медленно
         let deleteEnemy = SKAction.removeFromParent()
-        let enemySequence = SKAction.sequence([moveEnemy, deleteEnemy])
+        let loseALifeAction = SKAction.run(loseAlife)
+        let enemySequence = SKAction.sequence([moveEnemy, deleteEnemy, loseALifeAction])
         enemy.run(enemySequence)
         
         let dx = endPoint.x - startPoint.x
