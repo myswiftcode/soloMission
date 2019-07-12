@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D81E30B522D6586E00AE9837 /* theboldfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D81E30B422D6586E00AE9837 /* theboldfont.ttf */; };
+		D81E30B722D6D3ED00AE9837 /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81E30B622D6D3ED00AE9837 /* GameOverScene.swift */; };
 		D86996D222D19BBF00E229D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86996D122D19BBF00E229D1 /* AppDelegate.swift */; };
 		D86996D422D19BBF00E229D1 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = D86996D322D19BBF00E229D1 /* GameScene.sks */; };
 		D86996D622D19BBF00E229D1 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = D86996D522D19BBF00E229D1 /* Actions.sks */; };
@@ -40,6 +41,7 @@
 
 /* Begin PBXFileReference section */
 		D81E30B422D6586E00AE9837 /* theboldfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = theboldfont.ttf; sourceTree = "<group>"; };
+		D81E30B622D6D3ED00AE9837 /* GameOverScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
 		D86996CE22D19BBF00E229D1 /* Solo Mission.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Solo Mission.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D86996D122D19BBF00E229D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D86996D322D19BBF00E229D1 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 				D86996DE22D19BC100E229D1 /* Assets.xcassets */,
 				D86996E022D19BC100E229D1 /* LaunchScreen.storyboard */,
 				D86996E322D19BC100E229D1 /* Info.plist */,
+				D81E30B622D6D3ED00AE9837 /* GameOverScene.swift */,
 			);
 			path = "Solo Mission";
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 			files = (
 				D86996D822D19BBF00E229D1 /* GameScene.swift in Sources */,
 				D86996DA22D19BBF00E229D1 /* GameViewController.swift in Sources */,
+				D81E30B722D6D3ED00AE9837 /* GameOverScene.swift in Sources */,
 				D86996D222D19BBF00E229D1 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -7,12 +7,13 @@
 //
 
 import SpriteKit
-import GameplayKit
+//import GameplayKit
+
+    // Добавляем счет игр
+var gameScore = 0
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    // Добавляем счет игры
-    var gameScore = 0
     let scoreLabel = SKLabelNode(fontNamed: "The Bold Font")
     
     // Добвляем жизнь игроку
@@ -28,6 +29,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let player = SKSpriteNode(imageNamed: "playerShip")
     let playerBulletSoundEffect = SKAction.playSoundFileNamed("playerBullet.mp3", waitForCompletion: false)
     let explosionSundEffect = SKAction.playSoundFileNamed("explosion.wav", waitForCompletion: false)
+    
+    // Добавляем события игры
+    enum gameState {
+        // До начала игры
+        case preGame
+        // Во время игры
+        case inGame
+        // В конце игры gameOver
+        case afterGame
+    }
+    
+    var currentGameState = gameState.inGame
     
     
     struct PhysicsCategories {
@@ -62,6 +75,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func didMove(to view: SKView) {
+        
+        gameScore = 0
         
         // Добавляем физику в игру
         self.physicsWorld.contactDelegate = self
@@ -117,6 +132,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let scaleDown = SKAction.scale(to: 1, duration: 0.2)
         let scaleSequence = SKAction.sequence([scaleUp, scaleDown])
         livesLabel.run(scaleSequence)
+        
+        if livesNumber == 0 {
+            runGameOver()
+        }
     }
     
     // Добавляем обработчик счетчика игры
@@ -128,6 +147,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if gameScore == 10 || gameScore == 25 || gameScore == 50 {
             startNewLevel()
         }
+    }
+    
+    // Создаем обработку конца игры
+    func runGameOver() {
+        
+        currentGameState = gameState.afterGame
+        
+        self.removeAllActions()
+        self.enumerateChildNodes(withName: "Bullet") {
+            bullet, stop in
+            bullet.removeAllActions()
+        }
+        
+        self.enumerateChildNodes(withName: "Enemy") {
+            enemy, stop in
+            enemy.removeAllActions()
+        }
+        
+        // Создаем переключение экрана после конца игры с задержкой в 1 секунду
+        let changeSceneAction = SKAction.run(changeScene)
+        let waitToChangeScene = SKAction.wait(forDuration: 1)
+        let changeSceneSequence = SKAction.sequence([waitToChangeScene, changeSceneAction])
+        self.run(changeSceneSequence)
+    }
+    
+    func changeScene() {
+        let sceneToMove = GameOverScene(size: self.size)
+        sceneToMove.scaleMode = self.scaleMode
+        let myTransition = SKTransition.fade(withDuration: 0.5)
+        self.view!.presentScene(sceneToMove, transition: myTransition)
     }
     
     // Создаем обработку контактов спрайтов
@@ -160,6 +209,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             spawnEnemyExplosion(spawnPosition: body1.node!.position)
             spawnEnemyExplosion(spawnPosition: body2.node!.position)
+            
+            runGameOver()
         }
         
         if body1.categoryBitMask == PhysicsCategories.pBullet && body2.categoryBitMask == PhysicsCategories.pEnemy && (body2.node?.position.y)! < self.size.height {
@@ -230,6 +281,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func playerCircleBullet(){
         
         let bullet = SKSpriteNode(imageNamed: "playerBullet")
+        bullet.name = "Bullet"
         bullet.setScale(0.3)
         bullet.position = player.position
         bullet.zPosition = 1
@@ -257,6 +309,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let endPoint = CGPoint(x: randomXEnd, y: -self.size.height * 0.2)
         
         let enemy = SKSpriteNode(imageNamed: "enemyShip")
+        enemy.name = "Enemy"
         enemy.setScale(0.2)
         enemy.position = startPoint
         // Добавляем физику
@@ -272,7 +325,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let deleteEnemy = SKAction.removeFromParent()
         let loseALifeAction = SKAction.run(loseAlife)
         let enemySequence = SKAction.sequence([moveEnemy, deleteEnemy, loseALifeAction])
-        enemy.run(enemySequence)
+        
+        if currentGameState == gameState.inGame {
+            enemy.run(enemySequence)
+        }
         
         let dx = endPoint.x - startPoint.x
         let dy = endPoint.y - startPoint.y
@@ -306,8 +362,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        playerCircleBullet()
-        //createEnemy01()
+        
+        if currentGameState == gameState.inGame {
+            playerCircleBullet()
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -318,7 +376,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let previousPointOfTouch = touch.previousLocation(in: self.view)
             let amountDragged = pointOfTouch.x - previousPointOfTouch.x
             
-            player.position.x += amountDragged
+            if currentGameState == gameState.inGame {
+                player.position.x += amountDragged
+            }
             
             // Добавляем проверку на игровую зону
             // Проверка - право
