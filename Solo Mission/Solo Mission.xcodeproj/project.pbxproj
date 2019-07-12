@@ -20,6 +20,7 @@
 		D86996ED22D19BC100E229D1 /* Solo_MissionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86996EC22D19BC100E229D1 /* Solo_MissionTests.swift */; };
 		D86996F822D19BC100E229D1 /* Solo_MissionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86996F722D19BC100E229D1 /* Solo_MissionUITests.swift */; };
 		D869970622D1B71200E229D1 /* playerBullet.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D869970522D1B71200E229D1 /* playerBullet.mp3 */; };
+		D89945F722D9136000406082 /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89945F622D9136000406082 /* MainMenuScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		D86996F722D19BC100E229D1 /* Solo_MissionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Solo_MissionUITests.swift; sourceTree = "<group>"; };
 		D86996F922D19BC100E229D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D869970522D1B71200E229D1 /* playerBullet.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = playerBullet.mp3; sourceTree = "<group>"; };
+		D89945F622D9136000406082 /* MainMenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +117,7 @@
 				D86996D522D19BBF00E229D1 /* Actions.sks */,
 				D869970522D1B71200E229D1 /* playerBullet.mp3 */,
 				D86996D722D19BBF00E229D1 /* GameScene.swift */,
+				D89945F622D9136000406082 /* MainMenuScene.swift */,
 				D86996D922D19BBF00E229D1 /* GameViewController.swift */,
 				D86996DB22D19BBF00E229D1 /* Main.storyboard */,
 				D86996DE22D19BC100E229D1 /* Assets.xcassets */,
@@ -278,6 +281,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D89945F722D9136000406082 /* MainMenuScene.swift in Sources */,
 				D86996D822D19BBF00E229D1 /* GameScene.swift in Sources */,
 				D86996DA22D19BBF00E229D1 /* GameViewController.swift in Sources */,
 				D81E30B722D6D3ED00AE9837 /* GameOverScene.swift in Sources */,
