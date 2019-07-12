@@ -21,6 +21,7 @@
 		D86996F822D19BC100E229D1 /* Solo_MissionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86996F722D19BC100E229D1 /* Solo_MissionUITests.swift */; };
 		D869970622D1B71200E229D1 /* playerBullet.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D869970522D1B71200E229D1 /* playerBullet.mp3 */; };
 		D89945F722D9136000406082 /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89945F622D9136000406082 /* MainMenuScene.swift */; };
+		D89945F922D91E8A00406082 /* spaceinvaders1.mpeg in Resources */ = {isa = PBXBuildFile; fileRef = D89945F822D91E8A00406082 /* spaceinvaders1.mpeg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		D86996F922D19BC100E229D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D869970522D1B71200E229D1 /* playerBullet.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = playerBullet.mp3; sourceTree = "<group>"; };
 		D89945F622D9136000406082 /* MainMenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
+		D89945F822D91E8A00406082 /* spaceinvaders1.mpeg */ = {isa = PBXFileReference; lastKnownFileType = video.mpeg; path = spaceinvaders1.mpeg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				D86996D122D19BBF00E229D1 /* AppDelegate.swift */,
+				D89945F822D91E8A00406082 /* spaceinvaders1.mpeg */,
 				D81E30B422D6586E00AE9837 /* theboldfont.ttf */,
 				D86996D322D19BBF00E229D1 /* GameScene.sks */,
 				D86996D522D19BBF00E229D1 /* Actions.sks */,
@@ -253,6 +256,7 @@
 				D86996DD22D19BBF00E229D1 /* Main.storyboard in Resources */,
 				D869970622D1B71200E229D1 /* playerBullet.mp3 in Resources */,
 				D86996D422D19BBF00E229D1 /* GameScene.sks in Resources */,
+				D89945F922D91E8A00406082 /* spaceinvaders1.mpeg in Resources */,
 				D86996DF22D19BC100E229D1 /* Assets.xcassets in Resources */,
 				D86996E222D19BC100E229D1 /* LaunchScreen.storyboard in Resources */,
 				D86996D622D19BBF00E229D1 /* Actions.sks in Resources */,
