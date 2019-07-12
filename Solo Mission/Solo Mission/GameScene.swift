@@ -30,6 +30,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let playerBulletSoundEffect = SKAction.playSoundFileNamed("playerBullet.mp3", waitForCompletion: false)
     let explosionSundEffect = SKAction.playSoundFileNamed("explosion.wav", waitForCompletion: false)
     
+    // Добавляем появление игрока по нажатию на экран(выезжает с низу экрана)
+    let tapToStartLabel = SKLabelNode(fontNamed: "The Bold Font")
+    
     // Добавляем события игры
     enum gameState {
         // До начала игры
@@ -40,7 +43,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case afterGame
     }
     
-    var currentGameState = gameState.inGame
+    var currentGameState = gameState.preGame
     
     
     struct PhysicsCategories {
@@ -81,18 +84,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Добавляем физику в игру
         self.physicsWorld.contactDelegate = self
         
-        // Пишем фон
-        let background = SKSpriteNode(imageNamed: "background")
-        background.size = self.size
-        background.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
-        background.zPosition = 0
-        self.addChild(background)
+        // Пишем фон с прокруткой и зацикливанием
+        for i in 0...1 {
+            let background = SKSpriteNode(imageNamed: "background")
+            background.size = self.size
+            background.anchorPoint = CGPoint(x: 0.5, y: 0)
+            background.position = CGPoint(x: self.size.width / 2, y: self.size.height * CGFloat(i))
+            background.zPosition = 0
+            background.name = "background"
+            self.addChild(background)
+        }
         
         // Пишем игрока
         player.setScale(0.3)
-        player.position = CGPoint(x: self.size.width / 2, y: self.size.height * 0.2)
+        //player.position = CGPoint(x: self.size.width / 2, y: self.size.height * 0.2)
+        player.position = CGPoint(x: self.size.width / 2, y: 0 - player.size.height)
         player.zPosition = 2
-        // Добавляем фищику
+        // Добавляем физику
         player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
         player.physicsBody!.affectedByGravity = false
         player.physicsBody!.categoryBitMask = PhysicsCategories.pPlayer
@@ -115,11 +123,44 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         livesLabel.fontSize = 70
         livesLabel.fontColor = SKColor.white
         livesLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.right
-        livesLabel.position = CGPoint(x: self.size.width * 0.85, y: self.size.height * 0.9)
+        livesLabel.position = CGPoint(x: self.size.width * 0.85, y: self.size.height + scoreLabel.frame.size.height)
         livesLabel.zPosition = 100
         self.addChild(livesLabel)
         
-        startNewLevel()
+        // Добавляем логику появления верхних меню на экране
+        //let moveOnToScreenAction = SKAction.move(to: self.size.height*0.9, duration: 0.3)
+        let moveOnToScreenAction = SKAction.moveTo(y: self.size.height * 0.9, duration: 0.3)
+        scoreLabel.run(moveOnToScreenAction)
+        livesLabel.run(moveOnToScreenAction)
+        
+        // Нажмите на экран чтобы начать игру
+        tapToStartLabel.text = "Tap To Begin Game"
+        tapToStartLabel.fontSize = 100
+        tapToStartLabel.fontColor = SKColor.white
+        tapToStartLabel.position = CGPoint(x: self.size.width / 2, y: self.size.height + scoreLabel.frame.size.height)
+        tapToStartLabel.alpha = 0
+        self.addChild(tapToStartLabel)
+        
+        // Добавляем появление
+        let fadeInAction = SKAction.fadeIn(withDuration: 0.3)
+        tapToStartLabel.run(fadeInAction)
+        
+        //startNewLevel()
+    }
+    
+    // Логика для старта игры
+    func startGame() {
+        currentGameState = gameState.inGame
+        
+        let fadeOutAction = SKAction.fadeOut(withDuration: 0.5)
+        let deleteAction = SKAction.removeFromParent()
+        let deleteSequence = SKAction.sequence([fadeOutAction, deleteAction])
+        tapToStartLabel.run(deleteSequence)
+        
+        let moveShipOnScreenAction = SKAction.moveTo(y: self.size.height * 0.2, duration: 0.5)
+        let startLevelAction = SKAction.run(startNewLevel)
+        let startGameSequence = SKAction.sequence([moveShipOnScreenAction, startLevelAction])
+        player.run(startGameSequence)
     }
     
     // Добавляем проверку жизней и конец игры
@@ -363,7 +404,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        if currentGameState == gameState.inGame {
+        // Логика для пре старта игры
+        if currentGameState == gameState.preGame {
+            startGame()
+        }
+        // Если статус не выполнен в preGame то выполняем inGame
+        else if currentGameState == gameState.inGame {
             playerCircleBullet()
         }
     }
@@ -400,8 +446,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
     }
     
+    var lastUpdateTime: TimeInterval = 0
+    var deltaFrameTime: TimeInterval = 0
+    var amountToMovePerSecond: CGFloat = 600.0
     
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+        if lastUpdateTime == 0 {
+            lastUpdateTime = currentTime
+        } else {
+            deltaFrameTime = currentTime - lastUpdateTime
+            lastUpdateTime = currentTime
+        }
+        
+        let amountToMoveBackground = amountToMovePerSecond * CGFloat(deltaFrameTime)
+        
+        self.enumerateChildNodes(withName: "background") {
+            background, stop in
+            
+            if self.currentGameState == gameState.inGame {
+                background.position.y -= amountToMoveBackground
+            }
+            
+            if background.position.y < -self.size.height {
+                background.position.y += self.size.height * 2
+            }
+        }
     }
 }
