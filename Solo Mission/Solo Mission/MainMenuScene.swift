@@ -18,7 +18,7 @@ class MainMenuScene: SKScene {
 //        background.zPosition = 0
 //        self.addChild(background)
         
-        let gameBy = SKLabelNode(fontNamed: "The Bold Font")
+        let gameBy = SKLabelNode(fontNamed: "theboldfont")
         gameBy.text = "Sergeev V.A"
         gameBy.fontSize = 50
         gameBy.fontColor = SKColor.white
@@ -26,7 +26,7 @@ class MainMenuScene: SKScene {
         gameBy.zPosition = 1
         self.addChild(gameBy)
         
-        let gameName1 = SKLabelNode(fontNamed: "The Bold Font")
+        let gameName1 = SKLabelNode(fontNamed: "theboldfont")
         gameName1.text = "Solo"
         gameName1.fontSize = 200
         gameName1.fontColor = SKColor.white
@@ -34,7 +34,7 @@ class MainMenuScene: SKScene {
         gameName1.zPosition = 1
         self.addChild(gameName1)
         
-        let gameName2 = SKLabelNode(fontNamed: "The Bold Font")
+        let gameName2 = SKLabelNode(fontNamed: "theboldfont")
         gameName2.text = "Mission"
         gameName2.fontSize = 200
         gameName2.fontColor = SKColor.white
@@ -42,7 +42,7 @@ class MainMenuScene: SKScene {
         gameName2.zPosition = 1
         self.addChild(gameName2)
         
-        let startGame = SKLabelNode(fontNamed: "The Bold Font")
+        let startGame = SKLabelNode(fontNamed: "theboldfont")
         startGame.text = "Start Game"
         startGame.fontSize = 200
         startGame.fontColor = SKColor.white

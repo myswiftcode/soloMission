@@ -7,9 +7,10 @@
 //
 
 import SpriteKit
+//import CoreMotion
 //import GameplayKit
 
-    // Добавляем счет игр
+// Добавляем счет игр
 var gameScore = 0
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -33,16 +34,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // Добавляем появление игрока по нажатию на экран(выезжает с низу экрана)
     let tapToStartLabel = SKLabelNode(fontNamed: "The Bold Font")
     
+    // Появлеине Босса стадия 01
+    let BossInvasionStage01 = SKLabelNode(fontNamed: "The Bold Font")
+    
+    // Для акселерометра
+    //var xAccelerate:CGFloat = 0
+    
+    // Обазаначем переменную для управления кораблем игрока в игре
+    //let motionManager = CMMotionManager()
+    
     // Добавляем события игры
     enum gameState {
         // До начала игры
         case preGame
         // Во время игры
         case inGame
+        // Появление босса
+        case bossInvStag01
         // В конце игры gameOver
         case afterGame
     }
     
+    // До начала игры
     var currentGameState = gameState.preGame
     
     
@@ -51,6 +64,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         static let pPlayer : UInt32 = 0b1  // 1
         static let pBullet : UInt32 = 0b10 // 2
         static let pEnemy : UInt32 = 0b100 // 4
+        static let pBoss: UInt32 = 0b1000  // 5
     }
     
     // Создаем случайную
@@ -79,6 +93,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func didMove(to view: SKView) {
         
+        // Счетчик в 0
         gameScore = 0
         
         // Добавляем физику в игру
@@ -100,6 +115,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //player.position = CGPoint(x: self.size.width / 2, y: self.size.height * 0.2)
         player.position = CGPoint(x: self.size.width / 2, y: 0 - player.size.height)
         player.zPosition = 2
+        
         // Добавляем физику
         player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
         player.physicsBody!.affectedByGravity = false
@@ -114,7 +130,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.fontSize = 70
         scoreLabel.fontColor = SKColor.white
         scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
-        scoreLabel.position = CGPoint(x: self.size.width * 0.15, y: self.size.height * 0.9)
+        scoreLabel.position = CGPoint(x: self.size.width * 0.15, y: self.size.height + livesLabel.frame.size.height)
         scoreLabel.zPosition = 100
         self.addChild(scoreLabel)
         
@@ -129,15 +145,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Добавляем логику появления верхних меню на экране
         //let moveOnToScreenAction = SKAction.move(to: self.size.height*0.9, duration: 0.3)
-        let moveOnToScreenAction = SKAction.moveTo(y: self.size.height * 0.9, duration: 0.3)
-        scoreLabel.run(moveOnToScreenAction)
-        livesLabel.run(moveOnToScreenAction)
+        let moveOnToScreenActionScoreLabel = SKAction.moveTo(y: self.size.height * 0.9, duration: 0.3)
+        scoreLabel.run(moveOnToScreenActionScoreLabel)
+        
+        let moveOnToScreenActionLivesLabel = SKAction.moveTo(y: self.size.height * 0.9, duration: 0.3)
+        livesLabel.run(moveOnToScreenActionLivesLabel)
         
         // Нажмите на экран чтобы начать игру
         tapToStartLabel.text = "Tap To Begin Game"
         tapToStartLabel.fontSize = 100
         tapToStartLabel.fontColor = SKColor.white
-        tapToStartLabel.position = CGPoint(x: self.size.width / 2, y: self.size.height + scoreLabel.frame.size.height)
+        tapToStartLabel.position = CGPoint(x: self.size.width / 2, y: self.size.height * 0.2)
         tapToStartLabel.alpha = 0
         self.addChild(tapToStartLabel)
         
@@ -145,7 +163,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let fadeInAction = SKAction.fadeIn(withDuration: 0.3)
         tapToStartLabel.run(fadeInAction)
         
+        // Появление босса
+        BossInvasionStage01.text = "Boss Invasion!"
+        BossInvasionStage01.fontSize = 100
+        BossInvasionStage01.fontColor = SKColor.white
+        BossInvasionStage01.position = CGPoint(x: self.size.width / 2, y: self.size.height * 0.2)
+        BossInvasionStage01.alpha = 0
+        self.addChild(BossInvasionStage01)
+        
+        let bossInvasionStage01 = SKAction.fadeIn(withDuration: 0.3)
+        BossInvasionStage01.run(bossInvasionStage01)
+        
         //startNewLevel()
+        
+//        // Время обновления
+//        motionManager.accelerometerUpdateInterval = 0.2
+//        // Добавляем параметры для обновления
+//        // Шаблонный метод для управления акселерометором на iPhone, для iPad нужно переработать
+//        motionManager.startAccelerometerUpdates(to: OperationQueue.current!) { (data:CMAccelerometerData?, error: Error?) in
+//            if let accelerometerData = data {
+//                let acceleration = accelerometerData.acceleration
+//                // Плавное передвижение игрока на экране
+//                self.xAccelerate = CGFloat(acceleration.x) * 0.75 + self.xAccelerate * 0.25
+//            }
+//        }
+
     }
     
     // Логика для старта игры
@@ -185,8 +227,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.text = "Score: \(gameScore)"
         
         // Добавляем события - новый уровень при достижении количества убитых врагов
-        if gameScore == 10 || gameScore == 25 || gameScore == 50 {
-            startNewLevel()
+//        if gameScore == 10 || gameScore == 25 || gameScore == 50 {
+//            startNewLevel()
+//        }
+        
+        // Добавляем события - новый уровень при достижении количества убитых врагов
+        switch gameScore {
+//        case 10: gameScore += 50
+//                 startNewLevel()
+        case 11: gameScore += 5
+                 createBossInvasionLevelStage01()
+        default:
+            print("Cannot find Game Score level!")
         }
     }
     
@@ -249,7 +301,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //body2.node?.removeFromParent() // Косякцц
             
             spawnEnemyExplosion(spawnPosition: body1.node!.position)
-            spawnEnemyExplosion(spawnPosition: body2.node!.position)
+            //spawnEnemyExplosion(spawnPosition: body2.node!.position)
             
             runGameOver()
         }
@@ -298,14 +350,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         var levelDuration = TimeInterval()
         
         switch levelNumber {
-        // время задержки  при 0.1 - 40 спрайтов врагов!
-        case 1: levelDuration = 1.2
-        case 2: levelDuration = 1
-        case 3: levelDuration = 0.8
-        case 4: levelDuration = 0.5
-        default:
-            levelDuration = 0.5
-            print("Cannot find level info")
+            // время задержки  при 0.1 - 40 спрайтов врагов!
+            case 1: levelDuration = 1.2
+            case 2: levelDuration = 1
+            case 3: levelDuration = 0.8
+            case 4: levelDuration = 0.5
+            default:
+                levelDuration = 0.5
+                print("Cannot find level info")
         }
         
         
@@ -338,6 +390,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let deleteBullet = SKAction.removeFromParent()
         let bulletSequence = SKAction.sequence([playerBulletSoundEffect, moveBullet, deleteBullet])
         bullet.run(bulletSequence)
+    }
+    
+    // Создаем первого босса
+    func createBossInvasionLevelStage01() {
+        
+        //currentGameState = gameState.bossInvStag01
+        
+        // Задержка перед появлением
+        //_ = SKAction.wait(forDuration: 2)
+        
+        // Появление Босса стадия 01
+        let randomXStart = random(min: gameArea.minX, max: gameArea.maxX)
+        let startPoint = CGPoint(x: randomXStart, y: self.size.height * 1.2)
+        
+        // Добавляем босса первой стадии
+        let bossStageInvLev01 = SKSpriteNode(imageNamed: "enemyShip")
+        bossStageInvLev01.name = "BossStage01"
+        bossStageInvLev01.setScale(0.8)
+        bossStageInvLev01.position = startPoint
+        // Добавляем физику
+        bossStageInvLev01.physicsBody = SKPhysicsBody(rectangleOf: bossStageInvLev01.size)
+        bossStageInvLev01.physicsBody!.affectedByGravity = false
+        bossStageInvLev01.physicsBody!.categoryBitMask = PhysicsCategories.pEnemy
+        bossStageInvLev01.physicsBody!.collisionBitMask = PhysicsCategories.pNone
+        bossStageInvLev01.physicsBody!.contactTestBitMask = PhysicsCategories.pPlayer | PhysicsCategories.pBullet
+        bossStageInvLev01.zPosition = 2
+        self.addChild(bossStageInvLev01)
+        
+        // DEBUG:
+        // Удаляем всех врагов
+        self.enumerateChildNodes(withName: "Enemy") {
+            enemy, stop in
+            enemy.removeAllActions()
+        }
+        
     }
     
     // Создаем противника
@@ -428,11 +515,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             // Добавляем проверку на игровую зону
             // Проверка - право
-            if player.position.x >= gameArea.maxX - player.size.width / 2 {
+            if player.position.x >= gameArea.maxX - player.size.width / 10 {
                 player.position.x = gameArea.maxX - player.size.width / 2
             }
             // Проверка - лево
-            if player.position.x <= gameArea.minX + player.size.width / 2 {
+            if player.position.x <= gameArea.minX + player.size.width / 10 {
                 player.position.x = gameArea.minX + player.size.width / 2
             }
         }
@@ -445,6 +532,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
     }
+    
+//    override func didSimulatePhysics() {
+//        // Добавляем скорость перемещения игрока по экрану * 50
+//        player.position.x += xAccelerate * 50
+//        if player.position.x < 0 {
+//            player.position = CGPoint(x: UIScreen.main.bounds.height - player.size.width, y: player.position.y)
+//        } else if player.position.x > UIScreen.main.bounds.width {
+//            player.position = CGPoint(x: 20, y: player.position.y)
+//        }
+//    }
     
     var lastUpdateTime: TimeInterval = 0
     var deltaFrameTime: TimeInterval = 0
